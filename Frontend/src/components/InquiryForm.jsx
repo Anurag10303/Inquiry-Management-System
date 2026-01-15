@@ -1,4 +1,15 @@
 import { useState } from "react";
+import {
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Box,
+  Alert,
+  Typography,
+} from "@mui/material";
 
 export default function InquiryForm({ refresh }) {
   const [form, setForm] = useState({
@@ -30,13 +41,11 @@ export default function InquiryForm({ refresh }) {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        throw new Error("Request failed");
-      }
+      if (!res.ok) throw new Error();
 
       setForm({ name: "", contact: "", source: "Website" });
       refresh();
-    } catch (err) {
+    } catch {
       setError("Failed to submit inquiry. Try again.");
     } finally {
       setLoading(false);
@@ -44,93 +53,53 @@ export default function InquiryForm({ refresh }) {
   };
 
   return (
-    <div style={card}>
-      <h3>Add New Inquiry</h3>
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h6" gutterBottom>
+        Add New Inquiry
+      </Typography>
 
-      <div style={field}>
-        <label>Name</label>
-        <input
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <TextField
+          label="Name"
           name="name"
           value={form.name}
           onChange={handleChange}
-          style={input}
+          fullWidth
         />
-      </div>
 
-      <div style={field}>
-        <label>Email / Phone</label>
-        <input
+        <TextField
+          label="Email / Phone"
           name="contact"
           value={form.contact}
           onChange={handleChange}
-          style={input}
+          fullWidth
         />
-      </div>
 
-      <div style={field}>
-        <label>Source</label>
-        <select
-          name="source"
-          value={form.source}
-          onChange={handleChange}
-          style={input}
+        <FormControl fullWidth>
+          <InputLabel>Source</InputLabel>
+          <Select
+            name="source"
+            value={form.source}
+            label="Source"
+            onChange={handleChange}
+          >
+            <MenuItem value="Website">Website</MenuItem>
+            <MenuItem value="WhatsApp">WhatsApp</MenuItem>
+            <MenuItem value="Email">Email</MenuItem>
+            <MenuItem value="Referral">Referral</MenuItem>
+          </Select>
+        </FormControl>
+
+        {error && <Alert severity="error">{error}</Alert>}
+
+        <Button
+          variant="contained"
+          onClick={submitInquiry}
+          disabled={loading}
         >
-          <option>Website</option>
-          <option>WhatsApp</option>
-          <option>Email</option>
-          <option>Referral</option>
-        </select>
-      </div>
-
-      {error && <p style={errorText}>{error}</p>}
-
-      <button
-        onClick={submitInquiry}
-        disabled={loading}
-        style={{
-          ...button,
-          opacity: loading ? 0.6 : 1,
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
-      >
-        {loading ? "Submitting..." : "Add Inquiry"}
-      </button>
-    </div>
+          {loading ? "Submitting..." : "Add Inquiry"}
+        </Button>
+      </Box>
+    </Box>
   );
 }
-
-/* ---------- styles ---------- */
-
-const card = {
-  border: "1px solid #ddd",
-  padding: "16px",
-  borderRadius: "6px",
-  marginBottom: "20px",
-};
-
-const field = {
-  display: "flex",
-  flexDirection: "column",
-  marginBottom: "10px",
-};
-
-const input = {
-  padding: "8px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-};
-
-const button = {
-  marginTop: "10px",
-  padding: "8px",
-  background: "#2563eb",
-  color: "white",
-  border: "none",
-  borderRadius: "4px",
-};
-
-const errorText = {
-  color: "red",
-  fontSize: "13px",
-  marginBottom: "8px",
-};

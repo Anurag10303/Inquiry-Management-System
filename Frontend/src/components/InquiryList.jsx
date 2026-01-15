@@ -1,3 +1,11 @@
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Paper,
+} from "@mui/material";
+
 export default function InquiryList({ inquiries, refresh }) {
   const updateStatus = async (id, status) => {
     await fetch(`http://localhost:5000/api/inquiries/${id}`, {
@@ -10,58 +18,43 @@ export default function InquiryList({ inquiries, refresh }) {
   };
 
   return (
-    <div>
-      <h3 style={{ marginBottom: "10px" }}>Inquiries</h3>
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        Inquiries
+      </Typography>
 
       {inquiries.map((inq) => (
-        <div key={inq._id} style={row}>
-          <div>
-            <div style={name}>{inq.name}</div>
-            <div style={text}>{inq.contact}</div>
-            <div style={text}>Source: {inq.source}</div>
-          </div>
+        <Paper
+          key={inq._id}
+          sx={{
+            p: 2,
+            mb: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Box>
+            <Typography fontWeight={600}>{inq.name}</Typography>
+            <Typography variant="body2">{inq.contact}</Typography>
+            <Typography variant="body2">
+              Source: {inq.source}
+            </Typography>
+          </Box>
 
-          <select
+          <Select
+            size="small"
             value={inq.status}
-            onChange={(e) => updateStatus(inq._id, e.target.value)}
-            style={statusSelect}
+            onChange={(e) =>
+              updateStatus(inq._id, e.target.value)
+            }
           >
-            <option>New</option>
-            <option>Contacted</option>
-            <option>Closed</option>
-          </select>
-        </div>
+            <MenuItem value="New">New</MenuItem>
+            <MenuItem value="Contacted">Contacted</MenuItem>
+            <MenuItem value="Closed">Closed</MenuItem>
+          </Select>
+        </Paper>
       ))}
-    </div>
+    </Box>
   );
 }
-
-/* ---------- styles ---------- */
-
-const row = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  border: "1px solid #ccc",
-  padding: "12px",
-  borderRadius: "6px",
-  marginBottom: "10px",
-  background: "#fafafa",
-};
-
-const name = {
-  fontWeight: "600",
-  fontSize: "15px",
-  color: "#111",
-};
-
-const text = {
-  fontSize: "14px",
-  color: "#222",
-};
-
-const statusSelect = {
-  padding: "6px",
-  borderRadius: "4px",
-  border: "1px solid #bbb",
-};
